@@ -2,6 +2,7 @@ use crate::memory::process::ProcessHandle;
 use crate::memory::types::MemoryRegion;
 use windows::Win32::System::Memory::{
     VirtualQueryEx, MEMORY_BASIC_INFORMATION, MEM_COMMIT, PAGE_GUARD, PAGE_NOACCESS,
+    PAGE_PROTECTION_FLAGS,
 };
 
 /// Enumerate all readable, committed memory regions in the target process
@@ -26,7 +27,7 @@ pub fn enumerate_regions(proc: &ProcessHandle) -> Vec<MemoryRegion> {
             // Only scan committed, non-guarded, accessible memory
             let is_committed = mbi.State == MEM_COMMIT;
             let is_accessible =
-                mbi.Protect != PAGE_NOACCESS && (mbi.Protect & PAGE_GUARD) == Default::default();
+                mbi.Protect != PAGE_NOACCESS && (mbi.Protect & PAGE_GUARD) == PAGE_PROTECTION_FLAGS(0);
 
             if is_committed && is_accessible && mbi.RegionSize > 0 {
                 regions.push(MemoryRegion {

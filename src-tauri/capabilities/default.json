@@ -1,0 +1,9 @@
+{
+  "$schema": "https://schemas.tauri.app/config/v2/capability.json",
+  "identifier": "default",
+  "description": "Default capability — grants the main window access to all MemHack commands",
+  "windows": ["main"],
+  "permissions": [
+    "core:default"
+  ]
+}

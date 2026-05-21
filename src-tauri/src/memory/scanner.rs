@@ -39,7 +39,7 @@ pub fn first_scan(
 ) -> Vec<FoundAddress> {
     let regions = enumerate_regions(proc);
     let total_regions = regions.len();
-    let target_bytes = target.to_bytes();
+    let _target_bytes = target.to_bytes();
     let value_size = target.byte_size();
     let alignment = match target {
         // Align to natural boundaries for faster scanning

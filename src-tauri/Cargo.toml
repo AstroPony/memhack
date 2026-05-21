@@ -4,6 +4,11 @@ version = "0.1.0"
 edition = "2021"
 description = "Personal memory editor"
 
+[package.metadata.bundle]
+name = "MemHack"
+identifier = "com.memhack.app"
+icon = ["icons/32x32.png", "icons/128x128.png", "icons/icon.ico"]
+
 [lib]
 name = "memhack_lib"
 crate-type = ["lib", "cdylib", "staticlib"]

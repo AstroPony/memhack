@@ -6,6 +6,7 @@ use std::time::Duration;
 use windows::Win32::Foundation::HANDLE;
 use windows::Win32::System::Diagnostics::Debug::WriteProcessMemory;
 
+
 /// Write a value to a specific address in the target process
 pub fn write_value(handle: HANDLE, address: u64, value: &ScanValue) -> Result<(), String> {
     let bytes = value.to_bytes();
@@ -36,7 +37,6 @@ pub fn write_value(handle: HANDLE, address: u64, value: &ScanValue) -> Result<()
 /// the frozen value at a configurable interval.
 pub struct ValueFreezer {
     frozen: Arc<Mutex<HashMap<u64, FreezeEntry>>>,
-    handle: HANDLE,
     running: Arc<Mutex<bool>>,
 }
 
@@ -53,9 +53,13 @@ impl ValueFreezer {
 
         let frozen_clone = frozen.clone();
         let running_clone = running.clone();
+        // Cast HANDLE (*mut c_void) to isize so the closure is Send.
+        // Win32 handles are opaque kernel IDs, safe to use from any thread.
+        let handle_isize = handle.0 as isize;
 
         // Background thread that continuously writes frozen values
         thread::spawn(move || {
+            let handle = HANDLE(handle_isize as *mut _);
             while *running_clone.lock().unwrap() {
                 if let Ok(entries) = frozen_clone.lock() {
                     for (address, entry) in entries.iter() {
@@ -77,7 +81,6 @@ impl ValueFreezer {
 
         Self {
             frozen,
-            handle,
             running,
         }
     }

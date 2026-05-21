@@ -9,6 +9,7 @@ pub struct AddressTable {
     pub entries: Vec<TableEntry>,
 }
 
+#[allow(dead_code)]
 impl AddressTable {
     pub fn new(game_name: &str) -> Self {
         Self {
@@ -94,7 +95,7 @@ pub fn list_tables() -> Result<Vec<String>, String> {
     Ok(names)
 }
 
-/// Delete a saved table
+#[allow(dead_code)]
 pub fn delete_table(game_name: &str) -> Result<(), String> {
     let dir = tables_dir()?;
     let filename = format!("{}.json", sanitize_name(game_name));

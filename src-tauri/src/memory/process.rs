@@ -20,6 +20,13 @@ pub struct ProcessHandle {
     pub name: String,
 }
 
+// HANDLE is *mut c_void, which Rust conservatively marks !Send. Win32 handles
+// are opaque kernel object references (not real heap pointers) and are safe to
+// use from any thread — CloseHandle is the only operation that isn't, and we
+// only call it from Drop, which runs on whatever thread drops the value.
+unsafe impl Send for ProcessHandle {}
+unsafe impl Sync for ProcessHandle {}
+
 impl Drop for ProcessHandle {
     fn drop(&mut self) {
         if !self.handle.is_invalid() {
